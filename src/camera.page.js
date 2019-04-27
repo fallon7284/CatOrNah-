@@ -1,9 +1,11 @@
 import React from 'react';
 import { View, Text, Button } from 'react-native';
-import { Camera, Permissions } from 'expo';
+import { Camera, Permissions, TouchableOpacity } from 'expo';
 import styles from './styles';
 import Clarifai from 'clarifai'
 import secrets from '../secrets'
+import axios from 'axios'
+import CatOrNah from './catornah'
 
 
 const clarifaiApp = new Clarifai.App({
@@ -15,7 +17,7 @@ export default class CameraPage extends React.Component {
     camera = null;
 
     state = {
-
+        clarifyData: null,
         hasCameraPermission: null,
         type: Camera.Constants.Type.back
     };
@@ -23,11 +25,17 @@ export default class CameraPage extends React.Component {
 
     // handleCaptureIn = () => this.setState({ capturing: true });
 
-    handleCapture = async () => {
-        const photoData = await this.camera.takePictureAsync({base64: true, skipProcessing: true});
-        const isDisCat = await clarifaiApp(photoData)
-        console.log(isDisCat)
-        this.setState({ capturing: false, capture: photoData })
+    handleCapture = async () => { 
+        try{
+            const photoData = await this.camera.takePictureAsync({base64: true})
+            const clarifaiResponse = await clarifaiApp.models.predict(Clarifai.GENERAL_MODEL, photoData.base64);
+            catData = clarifaiResponse
+            this.setState({ clarifyData: catData })
+            console.log(this.state.clarifyData.outputs[0].data.concepts.map(thing => thing.name))
+        } catch(error){
+            console.log(error)
+        }
+
     };
 
 
@@ -38,7 +46,8 @@ export default class CameraPage extends React.Component {
     };
 
     render() {
-        const { capturing, capture, hasCameraPermission, type } = this.state;
+        const { hasCameraPermission, type } = this.state;
+
 
         if (hasCameraPermission === null) {
             return <View />;
@@ -47,21 +56,20 @@ export default class CameraPage extends React.Component {
         }
 
         return (
-            <View onPress={() => this.handleCapture}>
-                <Camera 
-                    
-                    style={styles.preview}
-                    ref={camera => this.camera = camera}
-                    type={type}
-                />
-                <Button 
-                title="DataCat??"
-                onPress={() => {
-                    this.handleCapture()
-                    console.log("PUSH THAT FUCKING BUTTON")
-                    }}/>
-                
-            </View>
+            // this.state.clarifyData ? this.state.clarifyData.map(data => <Text>{data.data}</Text>) : 
+            <View >
+                    <Camera 
+                        style={styles.preview}
+                        ref={camera => this.camera = camera}
+                        type={type}
+                    />
+                    <Button 
+                    title="DataCat??"
+                    onPress={() => {
+                        this.handleCapture()
+                        }}/>
+                </View>
+            
         );
     };
 };

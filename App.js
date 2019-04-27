@@ -1,16 +1,18 @@
 import { createStackNavigator, createAppContainer } from 'react-navigation'
 import Welcome from './src/welcomescreen'
 import CameraPage from './src/camera.page'
-import CatOrNah from './src/catornah'
+import HomeOrCatOrNah from './src/catornah'
 
 const MainNavigator = createStackNavigator({
-  CatOrNah,
   CameraPage,
+  HomeOrCatOrNah,
   Welcome,
 })
 
 
-export default createAppContainer(MainNavigator)
+const CatOrNahApp = createAppContainer(MainNavigator)
+
+export default CatOrNahApp
 
 
 
