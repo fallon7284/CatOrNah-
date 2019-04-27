@@ -17,26 +17,49 @@ export default class CameraPage extends React.Component {
     camera = null;
 
     state = {
-        clarifyData: null,
+        clarifyData: undefined,
         hasCameraPermission: null,
         type: Camera.Constants.Type.back
     };
 
+    
 
     // handleCaptureIn = () => this.setState({ capturing: true });
 
     handleCapture = async () => { 
         try{
-            const photoData = await this.camera.takePictureAsync({base64: true})
+            const photoData = await this.camera.takePictureAsync({base64: true, quality: 4})
             const clarifaiResponse = await clarifaiApp.models.predict(Clarifai.GENERAL_MODEL, photoData.base64);
             catData = clarifaiResponse
-            this.setState({ clarifyData: catData })
-            console.log(this.state.clarifyData.outputs[0].data.concepts.map(thing => thing.name))
+            this.setState({ clarifyData: catData.outputs[0].data.concepts.map(thing => thing.name).includes('cat') })
+            this.forceUpdate()
+            console.log(this.state.clarifyData)
+            console.log(this.whatToRender())
+
         } catch(error){
             console.log(error)
         }
 
     };
+
+
+    whatToRender(){
+    if (this.state.clarifyData === undefined){
+        return ('')
+    }
+    else if (this.state.clarifyData === false){
+        return (
+                'NAH.'
+        )
+    } else if (this.state.clarifyData === true){
+        return (
+                'CAT!'
+        )
+    }
+}
+
+
+
 
 
     async componentDidMount() {
@@ -57,7 +80,9 @@ export default class CameraPage extends React.Component {
 
         return (
             // this.state.clarifyData ? this.state.clarifyData.map(data => <Text>{data.data}</Text>) : 
+
             <View >
+                <Text>{this.whatToRender()}</Text>
                     <Camera 
                         style={styles.preview}
                         ref={camera => this.camera = camera}
@@ -67,6 +92,7 @@ export default class CameraPage extends React.Component {
                     title="DataCat??"
                     onPress={() => {
                         this.handleCapture()
+                        this.props.navigation.navigate("HomeOrCatOrNah")
                         }}/>
                 </View>
             

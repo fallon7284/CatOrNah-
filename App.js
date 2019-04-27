@@ -4,8 +4,8 @@ import CameraPage from './src/camera.page'
 import HomeOrCatOrNah from './src/catornah'
 
 const MainNavigator = createStackNavigator({
-  CameraPage,
   HomeOrCatOrNah,
+  CameraPage,
   Welcome,
 })
 

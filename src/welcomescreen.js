@@ -12,8 +12,8 @@ export default class WelcomeScreen extends React.Component {
             <React.Fragment>
                 <Button
                 title="camera"
-                onPress={() => {navigate("CameraPage")}}
-                >Take me to the Camera</Button>
+                onPress={() => {navigate("HomeOrCatOrNah")}}
+                >Take me home</Button>
                 <Text>This is the welcome screen</Text>
             </React.Fragment>
         )
