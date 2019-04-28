@@ -6,11 +6,16 @@ import Clarifai from 'clarifai'
 import secrets from '../secrets'
 import axios from 'axios'
 import CatOrNah from './catornah'
+// import { Sound } from 'react-native-sound'
+// import meowSound from '../assets/Cat_Meow_2'
 
 
 const clarifaiApp = new Clarifai.App({
     apiKey: secrets.clarifaiKey
 })
+
+// const meow = new Sound(meowSound)
+// console.log(meow)
 
 
 export default class CameraPage extends React.Component {
@@ -53,8 +58,9 @@ export default class CameraPage extends React.Component {
                 this.state.clarifyData[0].name !== 'no person' ? `Nah, thats ${this.state.clarifyData[0].name}` : `Nah, thats ${this.state.clarifyData[1].name}`
         )
     } else if (this.state.YorN === true){
+        // meow.play()
         return (
-                'Yeah, thats cat!'
+                'Yeah, dats cat!'
         )
     }
 }
