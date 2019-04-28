@@ -1,13 +1,12 @@
 import React from 'react';
 import { View, Text, Button, TouchableOpacity } from 'react-native';
-import { Camera, Permissions } from 'expo';
+import { Camera, Permissions, Audio } from 'expo';
 import styles from './styles';
 import Clarifai from 'clarifai'
 import secrets from '../secrets'
 import axios from 'axios'
 import CatOrNah from './catornah'
-// import { Sound } from 'react-native-sound'
-// import meowSound from '../assets/Cat_Meow_2'
+
 
 
 const clarifaiApp = new Clarifai.App({
@@ -25,7 +24,8 @@ export default class CameraPage extends React.Component {
         YorN: null,
         clarifyData: null,
         hasCameraPermission: null,
-        type: Camera.Constants.Type.back
+        type: Camera.Constants.Type.back,
+        meow: null
     };
 
     
@@ -34,10 +34,10 @@ export default class CameraPage extends React.Component {
 
     handleCapture = async () => { 
         try{
-            const photoData = await this.camera.takePictureAsync({base64: true, quality: 4})
+            const photoData = await this.camera.takePictureAsync({base64: true, quality: 0.01})
             const clarifaiResponse = await clarifaiApp.models.predict(Clarifai.GENERAL_MODEL, photoData.base64);
             catData = clarifaiResponse
-            this.setState({ clarifyData: catData.outputs[0].data.concepts,  YorN: catData.outputs[0].data.concepts.map(thing => thing.name).includes('cat') })
+            this.setState({clarifyData: catData.outputs[0].data.concepts,  YorN: catData.outputs[0].data.concepts.map(thing => thing.name).includes('cat') })
             this.forceUpdate()
             console.log(this.state.YorN)
             console.log(this.whatToRender())
@@ -58,7 +58,6 @@ export default class CameraPage extends React.Component {
                 this.state.clarifyData[0].name !== 'no person' ? `Nah, thats ${this.state.clarifyData[0].name}` : `Nah, thats ${this.state.clarifyData[1].name}`
         )
     } else if (this.state.YorN === true){
-        // meow.play()
         return (
                 'Yeah, dats cat!'
         )
@@ -101,7 +100,11 @@ export default class CameraPage extends React.Component {
                     >
                     <TouchableOpacity>
                         <Text 
-                        onPress={() => this.camera.resumePreview()}
+                        onPress={() => {
+                            this.camera.resumePreview()
+                            this.setState({YorN: null})
+                            }
+                        }
                         style={this.state.YorN === true ? {fontSize: 65, color: "green", fontFamily: "Chalkduster"} : {fontSize: 65, color: "red", fontFamily: "Chalkduster"}}
                         >{this.whatToRender()}</Text> 
                     </TouchableOpacity>
