@@ -17,7 +17,8 @@ export default class CameraPage extends React.Component {
     camera = null;
 
     state = {
-        clarifyData: undefined,
+        YorN: null,
+        clarifyData: null,
         hasCameraPermission: null,
         type: Camera.Constants.Type.back
     };
@@ -31,9 +32,9 @@ export default class CameraPage extends React.Component {
             const photoData = await this.camera.takePictureAsync({base64: true, quality: 4})
             const clarifaiResponse = await clarifaiApp.models.predict(Clarifai.GENERAL_MODEL, photoData.base64);
             catData = clarifaiResponse
-            this.setState({ clarifyData: catData.outputs[0].data.concepts.map(thing => thing.name).includes('cat') })
+            this.setState({ clarifyData: catData.outputs[0].data.concepts,  YorN: catData.outputs[0].data.concepts.map(thing => thing.name).includes('cat') })
             this.forceUpdate()
-            console.log(this.state.clarifyData)
+            console.log(this.state.YorN)
             console.log(this.whatToRender())
 
         } catch(error){
@@ -44,14 +45,14 @@ export default class CameraPage extends React.Component {
 
 
     whatToRender(){
-    if (this.state.clarifyData === undefined){
+    if (this.state.YorN === null){
         return ('')
     }
-    else if (this.state.clarifyData === false){
+    else if (this.state.YorN === false){
         return (
-                'NAH.'
+                this.state.clarifyData[0].name !== 'no person' ? `Nah, thats ${this.state.clarifyData[0].name}` : `Nah, thats ${this.state.clarifyData[1].name}`
         )
-    } else if (this.state.clarifyData === true){
+    } else if (this.state.YorN === true){
         return (
                 'CAT!'
         )
@@ -80,9 +81,9 @@ export default class CameraPage extends React.Component {
 
         return (
             // this.state.clarifyData ? this.state.clarifyData.map(data => <Text>{data.data}</Text>) : 
-
-            <View >
-                <Text>{this.whatToRender()}</Text>
+            <React.Fragment>
+                <View >
+                {/* <Text>{this.whatToRender()}</Text> */}
                     <Camera 
                         style={styles.preview}
                         ref={camera => this.camera = camera}
@@ -92,10 +93,13 @@ export default class CameraPage extends React.Component {
                     title="DataCat??"
                     onPress={() => {
                         this.handleCapture()
-                        this.props.navigation.navigate("HomeOrCatOrNah")
+                        this.camera.pausePreview()
                         }}/>
                 </View>
-            
+                <Text 
+                style={this.state.YorN === true ? {fontSize: 65, color: "green", fontFamily: "Chalkduster"} : {fontSize: 65, color: "red", fontFamily: "Chalkduster"}}
+                >{this.whatToRender()}</Text> 
+            </React.Fragment>  
         );
     };
 };

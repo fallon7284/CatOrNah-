@@ -22,6 +22,7 @@ export default StyleSheet.create({
         position: 'absolute',
         height: 100,
         bottom: 0,
+        color: 'green'
     },
     captureBtn: {
         width: 60,
