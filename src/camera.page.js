@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text, Button } from 'react-native';
-import { Camera, Permissions, TouchableOpacity } from 'expo';
+import { View, Text, Button, TouchableOpacity } from 'react-native';
+import { Camera, Permissions } from 'expo';
 import styles from './styles';
 import Clarifai from 'clarifai'
 import secrets from '../secrets'
@@ -54,7 +54,7 @@ export default class CameraPage extends React.Component {
         )
     } else if (this.state.YorN === true){
         return (
-                'CAT!'
+                'Yeah, thats cat!'
         )
     }
 }
@@ -89,20 +89,32 @@ export default class CameraPage extends React.Component {
                         ref={camera => this.camera = camera}
                         type={type}
                     />
-                    <Button 
-                    title="DataCat??"
-                    onPress={() => {
-                        this.handleCapture()
-                        this.camera.pausePreview()
-                        }}/>
                 </View>
-                <Text 
-                style={this.state.YorN === true ? {fontSize: 65, color: "green", fontFamily: "Chalkduster"} : {fontSize: 65, color: "red", fontFamily: "Chalkduster"}}
-                >{this.whatToRender()}</Text> 
+                    <View
+                    style={{flex: 2, justifyContent: "space-between", alignItems: "center"}}
+                    >
+                    <TouchableOpacity>
+                        <Text 
+                        onPress={() => this.camera.resumePreview()}
+                        style={this.state.YorN === true ? {fontSize: 65, color: "green", fontFamily: "Chalkduster"} : {fontSize: 65, color: "red", fontFamily: "Chalkduster"}}
+                        >{this.whatToRender()}</Text> 
+                    </TouchableOpacity>
+                    
+
+                    <TouchableOpacity 
+                    onPress={() => {
+                            this.handleCapture()
+                            this.camera.pausePreview()}}>
+                        <Text style={{fontSize: 40, color: "white", fontFamily: "Chalkduster", justifyContent: "center"}}>
+                        DataCat?
+                        </Text>
+                    </TouchableOpacity>
+                </View>
             </React.Fragment>  
         );
     };
 };
+
 
 
 

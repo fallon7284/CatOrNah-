@@ -13,7 +13,7 @@ export default class HomeOrCatOrNah extends React.Component {
         return (
             <View style={{flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "green"}}>
                 <TouchableOpacity onPress={() => navigate("CameraPage")}>
-                    <Text style={{fontSize: 65, color: "white", fontFamily: "Chalkduster"}}>DataCat??</Text>
+                    <Text style={{fontSize: 60, color: "white", fontFamily: "Chalkduster"}}>CatOrNah??</Text>
                 </TouchableOpacity>
             </View>
             
