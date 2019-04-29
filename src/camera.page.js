@@ -4,8 +4,7 @@ import { Camera, Permissions, Audio } from 'expo';
 import styles from './styles';
 import Clarifai from 'clarifai'
 import secrets from '../secrets'
-import axios from 'axios'
-import CatOrNah from './catornah'
+
 
 
 
@@ -25,7 +24,6 @@ export default class CameraPage extends React.Component {
         clarifyData: null,
         hasCameraPermission: null,
         type: Camera.Constants.Type.back,
-        meow: null
     };
 
     
@@ -35,12 +33,15 @@ export default class CameraPage extends React.Component {
     handleCapture = async () => { 
         try{
             const photoData = await this.camera.takePictureAsync({base64: true, quality: 0.01})
-            const clarifaiResponse = await clarifaiApp.models.predict(Clarifai.GENERAL_MODEL, photoData.base64);
-            catData = clarifaiResponse
+            let start = new Date()
+            const catData = await clarifaiApp.models.predict(Clarifai.GENERAL_MODEL, photoData.base64);
+            console.log(new Date() - start)
             this.setState({clarifyData: catData.outputs[0].data.concepts,  YorN: catData.outputs[0].data.concepts.map(thing => thing.name).includes('cat') })
             this.forceUpdate()
-            console.log(this.state.YorN)
+            console.log(catData.outputs[0].data.concepts)
             console.log(this.whatToRender())
+
+            
 
         } catch(error){
             console.log(error)
@@ -55,11 +56,11 @@ export default class CameraPage extends React.Component {
     }
     else if (this.state.YorN === false){
         return (
-                this.state.clarifyData[0].name !== 'no person' ? `Nah, thats ${this.state.clarifyData[0].name}` : `Nah, thats ${this.state.clarifyData[1].name}`
+                this.state.clarifyData[0].name !== 'no person' ? `Nah, that\'s ${this.state.clarifyData[0].name}` : `Nah, that\'s ${this.state.clarifyData[1].name}`
         )
     } else if (this.state.YorN === true){
         return (
-                'Yeah, dats cat!'
+                'Yeah, that\'s cat!'
         )
     }
 }
@@ -71,7 +72,8 @@ export default class CameraPage extends React.Component {
     async componentDidMount() {
         const camera = await Permissions.askAsync(Permissions.CAMERA);
         const hasCameraPermission = (camera.status === 'granted');
-        this.setState({ hasCameraPermission });
+        this.setState({ hasCameraPermission});
+        
     };
 
     render() {
