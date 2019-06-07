@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^10.0.1",
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "clarifai": "^2.9.0",
     "expo": "^31.0.0",
     "react": "16.5.0",
